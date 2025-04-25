@@ -1,0 +1,20 @@
+//
+// Created by plush-jill on 4/25/25.
+//
+
+#ifndef GET_DATA_SIZE_HPP
+#define GET_DATA_SIZE_HPP
+#include <iostream>
+#include "../registrar/command-registrar.hpp"
+
+
+class GetDataSize final : public AbstractCommand {
+public:
+    void execute(AbstractClient* client) override;
+private:
+    static QString m_command_name_short;
+    static QString m_command_name_long;
+    static CommandRegistrar registrar;
+};
+
+#endif //GET_DATA_SIZE_HPP
