@@ -103,9 +103,6 @@ void Client::read_large_response_in_file(const std::filesystem::path& response_f
 }
 
 void Client::process_cli_input() noexcept(false) {
-    std::ios::sync_with_stdio(true);
-    std::cin.tie(nullptr);
-    setvbuf(stdin, nullptr, _IONBF, 0);
     m_cli_thread = std::thread([this]() {
         const QString help_message = "Available commands: exit, help, <SCPI command>";
         while (m_running) {
