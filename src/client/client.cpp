@@ -24,7 +24,7 @@ void Client::execute_command(const QString &command_name, QString* const result_
     if (const auto command = CommandFactory::instance().create(command_name)) {
         command->execute(this, result_message);
     } else {
-        throw std::runtime_error("An unsupported command yet");
+        throw std::runtime_error("A not-yet-supported or invalid command");
     }
 }
 
@@ -37,7 +37,7 @@ void Client::send_command(const QString &command) const {
     }
 }
 
-QByteArray Client::read_response(qint64 expected_size) const {
+QByteArray Client::read_response(const qint64 expected_size) const {
     if (m_tcp_socket->state() != QAbstractSocket::ConnectedState) {
         throw std::runtime_error("Socket is not connected");
     }
@@ -103,7 +103,9 @@ void Client::read_large_response_in_file(const std::filesystem::path& response_f
 }
 
 void Client::process_cli_input() noexcept(false) {
-
+    std::ios::sync_with_stdio(true);
+    std::cin.tie(nullptr);
+    setvbuf(stdin, nullptr, _IONBF, 0);
     m_cli_thread = std::thread([this]() {
         const QString help_message = "Available commands: exit, help, <SCPI command>";
         while (m_running) {

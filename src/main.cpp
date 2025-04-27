@@ -8,13 +8,11 @@
 int main(int argc, char** argv) {
     if (argc != 2) {
         qFatal("Usage: ./client <config.json>");
-        return 1;
     }
 
     QFile file(argv[1]);
     if (!file.open(QIODevice::ReadOnly)) {
         qFatal("Cannot open config file");
-        return 1;
     }
 
     const auto json = QJsonDocument::fromJson(file.readAll()).object();
@@ -24,11 +22,7 @@ int main(int argc, char** argv) {
 
     const std::shared_ptr<AbstractClient> client = std::make_shared<Client>(address, port);
 
-    QString result_message {};
-    client->execute_command("SYST:STAT?", &result_message);
-    std::cout << result_message.toStdString() << std::endl;
-    client->process_cli_input();
-
+    // client->process_cli_input();
 
 
     const QGuiApplication app(argc, argv);
@@ -47,5 +41,5 @@ int main(int argc, char** argv) {
         client->stop_cli_input();
     });
 
-    return app.exec();
+    return QGuiApplication::exec();
 }
