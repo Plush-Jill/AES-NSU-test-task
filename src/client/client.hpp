@@ -12,7 +12,7 @@
 class Client final : public AbstractClient {
 private:
     std::thread m_cli_thread;
-    std::atomic<bool> m_running;
+    std::atomic<bool> m_process_cli_input;
 public:
                     Client                          (const QHostAddress& address, quint16 port) noexcept(false);
 

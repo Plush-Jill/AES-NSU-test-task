@@ -10,6 +10,7 @@
 
 Client::Client(const QHostAddress &address, const quint16 port)
 : AbstractClient(address, port) {
+
 }
 
 void Client::execute_command(const QString& command_name) noexcept(false) {
@@ -103,15 +104,17 @@ void Client::read_large_response_in_file(const std::filesystem::path& response_f
 }
 
 void Client::process_cli_input() noexcept(false) {
+    m_process_cli_input = true;
     m_cli_thread = std::thread([this]() {
         const QString help_message = "Available commands: exit, help, <SCPI command>";
-        while (m_running) {
+        std::cout << help_message.toStdString() << std::endl;
+        while (m_process_cli_input) {
             try {
                 std::string input;
                 std::getline(std::cin, input);
 
                 if (input == "exit") {
-                    m_running = false;
+                    m_process_cli_input = false;
                     break;
                 } else if (input == "help") {
                     std::cout << help_message.toStdString() << std::endl;
@@ -139,7 +142,7 @@ void Client::process_cli_input() noexcept(false) {
 }
 
 void Client::stop_cli_input() noexcept(false) {
-    m_running = false;
+    m_process_cli_input = false;
     std::cin.putback('\n');
     if (m_cli_thread.joinable()) {
         m_cli_thread.join();
