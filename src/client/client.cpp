@@ -12,7 +12,7 @@
 
 Client::Client(const QHostAddress &address, const quint16 port)
 : AbstractClient(address, port) {
-    QObject::connect(this, &Client::command_requested, this, &Client::handle_command, Qt::BlockingQueuedConnection);
+    QObject::connect(this, &Client::command_execution_requested, this, &Client::handle_command, Qt::BlockingQueuedConnection);
 }
 
 void Client::execute_command(const QString& command_name) noexcept(false) {
@@ -21,7 +21,7 @@ void Client::execute_command(const QString& command_name) noexcept(false) {
 
 void Client::execute_command(const QString &command_name, QString* const result_message) noexcept(false) {
     if (QThread::currentThread() != thread()) {
-        emit command_requested(command_name, result_message);
+        emit command_execution_requested(command_name, result_message);
         return;
     }
 
@@ -121,7 +121,7 @@ void Client::stop_cli_input() noexcept(false) {
 }
 
 void Client::process_cli_input() noexcept(false) {
-    m_cli_thread = new CliThread(this);  // Передаем сырой указатель
+    m_cli_thread = new CliThread(this);
     m_cli_thread->start();
 }
 
@@ -133,7 +133,7 @@ Client::~Client() {
 void Client::handle_command(const QString& command, QString* result) {
     try {
         execute_command(command, result);
-    } catch (const std::exception& e) {
-        if (result) *result = QString("Error: %1").arg(e.what());
+    } catch (const std::exception& exception) {
+        if (result) *result = QString("Error: %1").arg(exception.what());
     }
 }

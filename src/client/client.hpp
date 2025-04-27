@@ -32,7 +32,7 @@ public:
     void            send_command                    (const QString& command) const noexcept(false) override;
 
     signals:
-        void command_requested(const QString& command, QString* result);
+        void command_execution_requested(const QString& command, QString* result);
 
     private slots:
         void handle_command(const QString& command, QString* result);
