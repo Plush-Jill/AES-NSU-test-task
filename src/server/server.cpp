@@ -72,11 +72,8 @@ protected:
                 response.append(reinterpret_cast<const char*>(&points), sizeof(points));
             } else if (command == "MEASure:DATA?" || command == "MEAS:DATA?") {
                 uint16_t data_[1000];
-                for (uint16_t i = 0; i < 1000; ++i) {
-                    data_[i] = i; // Преобразование в Little-Endian
-                }
                 for (int i = 0; i < 1000; ++i) {
-                    data_[i] = qToBigEndian(static_cast<uint16_t>(i)); // Преобразование в Big-Endian
+                    data_[i] = qToBigEndian(static_cast<uint16_t>(1)); // Преобразование в Big-Endian
                 }
                 response.append(reinterpret_cast<const char*>(data_), sizeof(data_));
             } else {

@@ -16,7 +16,7 @@ private:
     bool m_is_running;
     uint32_t m_data_size;
     std::filesystem::path m_data_path;
-
+    bool m_data_size_defined {false};
 public:
     ServerInfo() : m_is_running{}, m_data_size{} {}
 
