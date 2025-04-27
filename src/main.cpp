@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 
     const std::shared_ptr<AbstractClient> client = std::make_shared<Client>(address, port);
 
-    // client->process_cli_input();
+    client->process_cli_input();
 
 
     const QGuiApplication app(argc, argv);

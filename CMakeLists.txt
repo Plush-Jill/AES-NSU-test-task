@@ -39,7 +39,9 @@ qt_add_executable(client-side src/main.cpp
         src/client/abstract-client.hpp
         src/client/abstract-client.cpp
         src/client/backend.cpp
-        src/client/backend.hpp)
+        src/client/backend.hpp
+        src/client/cli_thread.cpp
+        src/client/cli_thread.hpp)
 
 qt_add_qml_module(client-side
         URI client-side
