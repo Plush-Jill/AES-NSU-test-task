@@ -14,12 +14,18 @@ CommandRegistrar GetData::registrar {
     [] { return std::make_unique<GetData>(); }
 };
 
-void GetData::execute(Client *client) {
+void GetData::execute(AbstractClient* client) {
+    execute(client, nullptr);
+}
+
+void GetData::execute(AbstractClient* client, QString *result_message) {
     client->send_command(m_command_name_short);
     const std::filesystem::path path {"data.txt"};
     const std::shared_ptr<ServerInfo> server_info = client->get_server_info_ptr();
-    client->read_large_response_in_file(path, server_info->get_data_size());
+    client->read_large_response_in_file(path, server_info->get_data_size() * sizeof(uint16_t));
     server_info->set_data_path(path);
-    std::cout << std::format("Result saved to: {}", path.string()) << std::endl;
+    if (result_message) {
+        *result_message = QString("Result saved to: %1").arg(path.string());
+    }
 }
 

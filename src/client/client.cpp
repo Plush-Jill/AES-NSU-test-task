@@ -1,12 +1,9 @@
 //
 // Created by plush-jill on 4/25/25.
 //
-#include "client.hpp"
-
 #include <iostream>
 #include <QFile>
-#include <qthread.h>
-
+#include "client.hpp"
 #include "../commands/factory/command-factory.hpp"
 #include "../commands/validator/command-validator.hpp"
 
@@ -16,12 +13,16 @@ Client::Client(const QHostAddress &address, const quint16 port)
 }
 
 void Client::execute_command(const QString& command_name) noexcept(false) {
+    execute_command(command_name, nullptr);
+}
+
+void Client::execute_command(const QString &command_name, QString* const result_message) noexcept(false) {
     QMutexLocker locker(&m_mutex);
     if (!CommandValidator::is_SCPI_command(command_name.trimmed())) {
         throw std::runtime_error("Is not SCPI command");
     }
     if (const auto command = CommandFactory::instance().create(command_name)) {
-        command->execute(this);
+        command->execute(this, result_message);
     } else {
         throw std::runtime_error("An unsupported command yet");
     }
@@ -37,14 +38,35 @@ void Client::send_command(const QString &command) const {
 }
 
 QByteArray Client::read_response(qint64 expected_size) const {
-    if (m_tcp_socket->state() == QAbstractSocket::ConnectedState) {
-        if (m_tcp_socket->waitForReadyRead(m_response_timeout_msec)) {
-            return QByteArray(m_tcp_socket->readAll());
-        }
-        throw std::runtime_error("Failed to read response");
+    if (m_tcp_socket->state() != QAbstractSocket::ConnectedState) {
+        throw std::runtime_error("Socket is not connected");
     }
-    throw std::runtime_error("Socket is not connected");
+
+    QByteArray total_data;
+    qint64 bytes_received = 0;
+
+    while (bytes_received < expected_size) {
+        if (m_tcp_socket->bytesAvailable() == 0) {
+            if (!m_tcp_socket->waitForReadyRead(m_response_timeout_msec)) {
+                throw std::runtime_error("Failed to read response: timeout");
+            }
+        }
+
+        QByteArray chunk = m_tcp_socket->read(expected_size - bytes_received);
+        if (chunk.isEmpty()) {
+            if (m_tcp_socket->state() != QAbstractSocket::ConnectedState) {
+                throw std::runtime_error("Connection closed before receiving complete data");
+            }
+            continue;
+        }
+
+        total_data.append(chunk);
+        bytes_received += chunk.size();
+    }
+
+    return total_data;
 }
+
 
 void Client::read_large_response_in_file(const std::filesystem::path& response_file, const quint64 data_size) const {
     if (!m_tcp_socket || !m_tcp_socket->isOpen()) {
@@ -81,18 +103,16 @@ void Client::read_large_response_in_file(const std::filesystem::path& response_f
 }
 
 void Client::process_cli_input() noexcept(false) {
-    static std::atomic<bool> running{true};
 
-    std::thread cliThread([this]() {
+    m_cli_thread = std::thread([this]() {
         const QString help_message = "Available commands: exit, help, <SCPI command>";
-        std::cout << help_message.toStdString() << std::endl;
-        while (running) {
+        while (m_running) {
             try {
                 std::string input;
                 std::getline(std::cin, input);
 
                 if (input == "exit") {
-                    running = false;
+                    m_running = false;
                     break;
                 } else if (input == "help") {
                     std::cout << help_message.toStdString() << std::endl;
@@ -104,7 +124,9 @@ void Client::process_cli_input() noexcept(false) {
                 }
                 QString command = QString::fromStdString(input).trimmed();
                 try{
-                    execute_command(command);
+                    QString result_message {};
+                    execute_command(command, &result_message);
+                    std::cout << result_message.toStdString() << std::endl;
                 } catch (std::exception& exception) {
                     std::cerr << exception.what() << std::endl;
                 }
@@ -114,5 +136,18 @@ void Client::process_cli_input() noexcept(false) {
         }
     });
 
-    cliThread.detach();
+    m_cli_thread.detach();
+}
+
+void Client::stop_cli_input() noexcept(false) {
+    m_running = false;
+    std::cin.putback('\n');
+    if (m_cli_thread.joinable()) {
+        m_cli_thread.join();
+    }
+}
+
+
+Client::~Client() {
+    stop_cli_input();
 }

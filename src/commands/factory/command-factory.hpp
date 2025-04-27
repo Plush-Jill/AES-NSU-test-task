@@ -7,7 +7,6 @@
 #include <functional>
 #include <memory>
 #include <QJsonArray>
-
 #include "../abstract-command.hpp"
 
 
@@ -20,12 +19,34 @@ private:
     QStringList                               m_command_names;
 
 public:
-                                            CommandFactory                  () = default;
-    static CommandFactory&                  instance                        ();
-    void                                    register_command                (const QString& name_short, const QString &name_full, Creator creator);
-    std::unique_ptr<AbstractCommand>        create                          (const QString& name) const;
-    QStringList                             get_available_commands          () const;
-    QJsonArray                              get_available_commands_json     () const;
+    CommandFactory                  () = default;
+
+    /**
+     * @brief Создание команды по имени.
+     * @param name Имя команды.
+     * @return Указатель на созданную команду или nullptr, если команда не найдена.
+     */
+    [[nodiscard]] std::unique_ptr<AbstractCommand>  create                          (const QString& name) const;
+
+    /**
+     *
+     * @return Инстанс синглтона.
+     */
+    static CommandFactory&                          instance                        ();
+
+    /**
+     * @brief Регистрация команды в фабрике.
+     * @param name_short Короткое имя команды.
+     * @param name_full Полное имя команды.
+     * @param creator Функция создания команды.
+     */
+    void                                            register_command                (const QString& name_short, const QString &name_full, Creator creator);
+
+    /**
+     * @brief Получение списка доступных команд.
+     * @return QStringList со всеми доступными командами.
+     */
+    [[nodiscard]] QStringList                       get_available_commands          () const;
 };
 
 #endif //COMMAND_FACTORY_HPP

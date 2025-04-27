@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.28)
 project(SAES_NSU_test_task)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -12,14 +12,8 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt6 6.9 REQUIRED COMPONENTS
         Core
         Widgets
-        3DCore
-        3DRender
-        3DExtras
-        3DInput
-        3DLogic
         Qml
         Quick
-        3DQuickScene2D # Попробуем этот модуль
 )
 
 qt_policy(SET QTP0001 NEW)
@@ -58,30 +52,15 @@ qt_add_qml_module(client-side
 target_link_libraries(client-side PRIVATE
         Qt6::Core
         Qt6::Widgets
-        Qt6::3DCore
-        Qt6::3DRender
-        Qt6::3DExtras
-        Qt6::3DInput
-        Qt6::3DLogic
         Qt6::Qml
         Qt6::Quick
-        Qt6::3DQuickScene2D # Добавляем линковку
 )
 
-#add_executable(SAES_NSU_test_task main.cpp)
 add_executable(server-side src/server/server.cpp)
-
-
 
 target_link_libraries(server-side PRIVATE
         Qt6::Core
         Qt6::Widgets
-        Qt6::3DCore
-        Qt6::3DRender
-        Qt6::3DExtras
-        Qt6::3DInput
-        Qt6::3DLogic
         Qt6::Qml
         Qt6::Quick
-        Qt6::3DQuickScene2D # Добавляем линковку
 )
