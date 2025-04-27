@@ -4,7 +4,7 @@
 
 #ifndef GET_STATE_HPP
 #define GET_STATE_HPP
-#include "../registrar/command-registrar.hpp"
+#include "../command-registrar.hpp"
 #include "src/client/abstract-client.hpp"
 
 

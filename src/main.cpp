@@ -3,7 +3,7 @@
 #include <string>
 #include <QtCore>
 #include "client/client.hpp"
-#include "backend.hpp"
+#include "client/backend.hpp"
 
 int main(int argc, char** argv) {
     if (argc != 2) {

@@ -5,7 +5,7 @@
 #ifndef COMMAND_REGISTRAR_HPP
 #define COMMAND_REGISTRAR_HPP
 #include <algorithm>
-#include "../factory/command-factory.hpp"
+#include "factory/command-factory.hpp"
 
 
 class CommandRegistrar {

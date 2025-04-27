@@ -6,7 +6,7 @@
 #define CLIENT_HPP
 #include <thread>
 #include "abstract-client.hpp"
-#include "../server-info.hpp"
+#include "server-info.hpp"
 #include "../commands/factory/command-factory.hpp"
 
 class Client final : public AbstractClient {

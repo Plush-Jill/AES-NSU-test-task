@@ -23,7 +23,7 @@ qt_add_executable(client-side src/main.cpp
         src/commands/abstract-command.hpp
         src/commands/factory/command-factory.cpp
         src/commands/factory/command-factory.hpp
-        src/commands/registrar/command-registrar.hpp
+        src/commands/command-registrar.hpp
         src/commands/get-state/get-state.cpp
         src/commands/get-state/get-state.hpp
         src/commands/get-data/get-data.cpp
@@ -34,12 +34,12 @@ qt_add_executable(client-side src/main.cpp
         src/commands/get-data-size/get-data-size.cpp
         src/commands/get-data-size/get-data-size.hpp
         src/client/client.cpp
-        src/server-info.cpp
-        src/server-info.hpp
+        src/client/server-info.cpp
+        src/client/server-info.hpp
         src/client/abstract-client.hpp
         src/client/abstract-client.cpp
-        src/backend.cpp
-        src/backend.hpp)
+        src/client/backend.cpp
+        src/client/backend.hpp)
 
 qt_add_qml_module(client-side
         URI client-side

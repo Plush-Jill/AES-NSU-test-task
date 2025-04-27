@@ -4,7 +4,7 @@
 
 #ifndef GET_DATA_SIZE_HPP
 #define GET_DATA_SIZE_HPP
-#include "../registrar/command-registrar.hpp"
+#include "../command-registrar.hpp"
 #include "src/client/abstract-client.hpp"
 
 
