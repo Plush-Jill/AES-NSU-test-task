@@ -4,13 +4,14 @@
 #include <iostream>
 #include <QFile>
 #include "client.hpp"
+#include "cli_thread.hpp"
 #include "../commands/factory/command-factory.hpp"
 #include "../commands/validator/command-validator.hpp"
 
 
 Client::Client(const QHostAddress &address, const quint16 port)
 : AbstractClient(address, port) {
-
+    QObject::connect(this, &Client::command_execution_requested, this, &Client::handle_command, Qt::BlockingQueuedConnection);
 }
 
 void Client::execute_command(const QString& command_name) noexcept(false) {
@@ -18,6 +19,11 @@ void Client::execute_command(const QString& command_name) noexcept(false) {
 }
 
 void Client::execute_command(const QString &command_name, QString* const result_message) noexcept(false) {
+    if (QThread::currentThread() != thread()) {
+        emit command_execution_requested(command_name, result_message);
+        return;
+    }
+
     QMutexLocker locker(&m_mutex);
     if (!CommandValidator::is_SCPI_command(command_name.trimmed())) {
         throw std::runtime_error("Is not SCPI command");
@@ -103,53 +109,30 @@ void Client::read_large_response_in_file(const std::filesystem::path& response_f
     file.close();
 }
 
-void Client::process_cli_input() noexcept(false) {
-    m_process_cli_input = true;
-    m_cli_thread = std::thread([this]() {
-        const QString help_message = "Available commands: exit, help, <SCPI command>";
-        std::cout << help_message.toStdString() << std::endl;
-        while (m_process_cli_input) {
-            try {
-                std::string input;
-                std::getline(std::cin, input);
-
-                if (input == "exit") {
-                    m_process_cli_input = false;
-                    break;
-                } else if (input == "help") {
-                    std::cout << help_message.toStdString() << std::endl;
-                    continue;
-                }
-
-                if (input.empty()) {
-                    continue;
-                }
-                QString command = QString::fromStdString(input).trimmed();
-                try{
-                    QString result_message {};
-                    execute_command(command, &result_message);
-                    std::cout << result_message.toStdString() << std::endl;
-                } catch (std::exception& exception) {
-                    std::cerr << exception.what() << std::endl;
-                }
-            } catch (const std::exception& exception) {
-                std::cerr << std::format("\nError: {}", exception.what()) << std::endl;
-            }
-        }
-    });
-
-    m_cli_thread.detach();
-}
-
 void Client::stop_cli_input() noexcept(false) {
-    m_process_cli_input = false;
-    std::cin.putback('\n');
-    if (m_cli_thread.joinable()) {
-        m_cli_thread.join();
+    if (m_cli_thread) {
+        m_cli_thread->terminate();
+        std::cin.putback('\n');
+        m_cli_thread->wait();
+        delete m_cli_thread;
+        m_cli_thread = nullptr;
     }
 }
 
+void Client::process_cli_input() noexcept(false) {
+    m_cli_thread = new CliThread(this);
+    m_cli_thread->start();
+}
 
 Client::~Client() {
     stop_cli_input();
+}
+
+
+void Client::handle_command(const QString& command, QString* result) {
+    try {
+        execute_command(command, result);
+    } catch (const std::exception& exception) {
+        if (result) *result = QString("Error: %1").arg(exception.what());
+    }
 }

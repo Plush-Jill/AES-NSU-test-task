@@ -6,13 +6,17 @@
 #define CLIENT_HPP
 #include <thread>
 #include "abstract-client.hpp"
+#include "cli_thread.hpp"
 #include "server-info.hpp"
 #include "../commands/factory/command-factory.hpp"
 
-class Client final : public AbstractClient {
+
+
+class Client final : public QObject, public AbstractClient {
+    Q_OBJECT
 private:
-    std::thread m_cli_thread;
-    std::atomic<bool> m_process_cli_input;
+    QThread* m_cli_thread {nullptr};
+    std::atomic<bool> m_running;
 public:
                     Client                          (const QHostAddress& address, quint16 port) noexcept(false);
 
@@ -26,7 +30,14 @@ public:
     ~Client() override;
 
     void            send_command                    (const QString& command) const noexcept(false) override;
+
+    signals:
+        void command_execution_requested(const QString& command, QString* result);
+
+    private slots:
+        void handle_command(const QString& command, QString* result);
 };
+
 
 
 #endif //CLIENT_HPP
