@@ -24,9 +24,9 @@ public:
     [[nodiscard]] std::filesystem::path get_data_path       () const;
     [[nodiscard]] bool                  get_is_running      () const;
 
-    void                                set_data_size       (const bool m_data_size);
+    void                                set_data_size       (bool m_data_size);
     void                                set_data_path       (const std::filesystem::path& data_path);
-    void                                set_is_running      (const bool m_is_running);
+    void                                set_is_running      (bool m_is_running);
 };
 
 

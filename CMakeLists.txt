@@ -25,7 +25,7 @@ find_package(Qt6 6.9 REQUIRED COMPONENTS
 qt_policy(SET QTP0001 NEW)
 qt_policy(SET QTP0004 NEW)
 
-qt_add_executable(SAES_NSU_test_task src/main.cpp
+qt_add_executable(client-side src/main.cpp
         src/commands/abstract-command.hpp
         src/commands/factory/command-factory.cpp
         src/commands/factory/command-factory.hpp
@@ -34,24 +34,28 @@ qt_add_executable(SAES_NSU_test_task src/main.cpp
         src/commands/get-state/get-state.hpp
         src/commands/get-data/get-data.cpp
         src/commands/get-data/get-data.hpp
-        src/client/abstract-client.hpp
+        src/client/client.hpp
         src/commands/validator/command-validator.cpp
         src/commands/validator/command-validator.hpp
         src/commands/get-data-size/get-data-size.cpp
         src/commands/get-data-size/get-data-size.hpp
-        src/client/abstract-client.cpp
+        src/client/client.cpp
         src/server-info.cpp
-        src/server-info.hpp)
+        src/server-info.hpp
+        src/client/abstract-client.hpp
+        src/client/abstract-client.cpp
+        src/backend.cpp
+        src/backend.hpp)
 
-qt_add_qml_module(SAES_NSU_test_task
-        URI SAES_NSU_test_task
+qt_add_qml_module(client-side
+        URI client-side
         VERSION 1.0
         QML_FILES qml/main.qml
         OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml"
         RESOURCES qml/resources.qrc
 )
 
-target_link_libraries(SAES_NSU_test_task PRIVATE
+target_link_libraries(client-side PRIVATE
         Qt6::Core
         Qt6::Widgets
         Qt6::3DCore
@@ -65,3 +69,19 @@ target_link_libraries(SAES_NSU_test_task PRIVATE
 )
 
 #add_executable(SAES_NSU_test_task main.cpp)
+add_executable(server-side src/server/server.cpp)
+
+
+
+target_link_libraries(server-side PRIVATE
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::3DCore
+        Qt6::3DRender
+        Qt6::3DExtras
+        Qt6::3DInput
+        Qt6::3DLogic
+        Qt6::Qml
+        Qt6::Quick
+        Qt6::3DQuickScene2D # Добавляем линковку
+)

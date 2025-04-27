@@ -4,14 +4,13 @@
 
 #ifndef GET_DATA_HPP
 #define GET_DATA_HPP
-#include <iostream>
-#include <string>
 #include "../registrar/command-registrar.hpp"
 
 
 class GetData final : public AbstractCommand {
 public:
-    void execute(AbstractClient* client) override;
+    void execute(Client* client) override;
+
 private:
     static QString m_command_name_short;
     static QString m_command_name_long;

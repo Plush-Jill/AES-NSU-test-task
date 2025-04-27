@@ -10,15 +10,23 @@
 class CommandValidator {
 private:
     // TODO: добавить выражение для команд апи
-    static QRegularExpression m_regex;
-
+    static QRegularExpression m_pattern;
 public:
-    /***
-     * @brief Проверяет валидность команды
-     * @param command Произвольная строка
-     * @return True если команда валидна, то есть соответствует SCPI, False если нет
+
+    /**
+     * @brief Проверяет совпадение двух команд
+     * @param command_1 Первая команда
+     * @param command_2 Вторая команда
+     * @return True если команды совпадают, False если нет
      */
-    [[nodiscard]] static bool is_command_valid(QStringView command);
+    [[nodiscard]] static bool is_commands_match(const QString &command_1, const QString &command_2);
+
+    /**
+     * @brief Проверяет валидность команды SCPI
+     * @param command Произвольная строка
+     * @return True если команда соответствует SCPI, False если нет
+     */
+    [[nodiscard]] static bool is_SCPI_command(const QString &command);
 };
 
 

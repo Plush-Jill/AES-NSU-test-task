@@ -4,13 +4,14 @@
 
 #ifndef ABSTRACT_COMMAND_HPP
 #define ABSTRACT_COMMAND_HPP
-#include "../client/abstract-client.hpp"
+#include "../client/client.hpp"
 
 
-class AbstractClient;
+class Client;
 class AbstractCommand {
+
 public:
-    virtual void    execute             (AbstractClient* client) = 0;
+    virtual void    execute             (Client* client) = 0;
     virtual         ~AbstractCommand    () = default;
 };
 

@@ -4,13 +4,13 @@
 
 #include "server-info.hpp"
 
-[[nodiscard]] bool ServerInfo::get_data_size() const {
+bool ServerInfo::get_data_size() const {
     return m_data_size;
 }
-[[nodiscard]] std::filesystem::path ServerInfo::get_data_path() const {
+std::filesystem::path ServerInfo::get_data_path() const {
     return m_data_path;
 }
-[[nodiscard]] bool ServerInfo::get_is_running() const {
+bool ServerInfo::get_is_running() const {
     return m_is_running;
 }
 

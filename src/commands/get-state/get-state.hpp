@@ -4,19 +4,18 @@
 
 #ifndef GET_STATE_HPP
 #define GET_STATE_HPP
-#include <iostream>
-#include <string>
 #include "../registrar/command-registrar.hpp"
 
 
 class GetStateCommand final : public AbstractCommand {
 public:
-    void execute(AbstractClient* client) override;
-private:
+    void execute(Client* client) override;
 
-    static const QString m_command_name_short;
-    static const QString m_command_name_long;
-    static const CommandRegistrar registrar;
+private:
+    static quint32 m_response_size;
+    static QString m_command_name_short;
+    static QString m_command_name_long;
+    static CommandRegistrar registrar;
 };
 
 #endif //GET_STATE_HPP
