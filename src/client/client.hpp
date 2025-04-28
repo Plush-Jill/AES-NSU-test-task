@@ -18,24 +18,27 @@ private:
     QThread* m_cli_thread {nullptr};
     std::atomic<bool> m_running;
 public:
-                    Client                          (const QHostAddress& address, quint16 port) noexcept(false);
+                    Client                          (const QHostAddress& address, quint16 port);
 
-    void            execute_command                 (const QString& command_name) noexcept(false) override;
-    void            execute_command                 (const QString& command_name, QString* result_message) noexcept(false) override;
-    void            read_large_response_in_file     (const std::filesystem::path& response_file, quint64 data_size) const noexcept(false) override;
-    QByteArray      read_response                   (qint64 expected_size) const noexcept(false) override;
-    void            process_cli_input               () noexcept(false) override;
-    void            stop_cli_input                  () noexcept(false) override;
+    void            execute_command                 (const QString& command_name) override;
+    void            execute_command                 (const QString& command_name, QString* result_message) override;
+    void            read_large_response_in_file     (const std::filesystem::path& response_file, quint64 data_size) const override;
+    QByteArray      read_response                   (qint64 expected_size) const override;
+    void            process_cli_input               () override;
+    void            stop_cli_input                  () override;
+    void            reconnect                       () override;
 
     ~Client() override;
 
-    void            send_command                    (const QString& command) const noexcept(false) override;
+    void            send_command                    (const QString& command) const override;
 
     signals:
         void command_execution_requested(const QString& command, QString* result);
+        void reconnect_requested();
 
     private slots:
         void handle_command(const QString& command, QString* result);
+        void handle_reconnect_request();
 };
 
 

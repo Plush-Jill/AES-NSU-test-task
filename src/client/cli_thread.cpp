@@ -9,7 +9,7 @@
 CliThread::CliThread(AbstractClient* client) : m_client(client) {}
 
 void CliThread::run() {
-    const QString help_message {"Available commands: exit, help, <SCPI command>"};
+    const QString help_message {"Available commands: exit, help, reconnect, <SCPI command>"};
     std::cout << help_message.toStdString() << std::endl;
     while (m_running) {
         std::cout << "> " << std::flush;
@@ -22,6 +22,18 @@ void CliThread::run() {
 
             if (input == "help") {
                 std::cout << help_message.toStdString() << std::endl;
+                continue;
+            }
+
+            if (input == "reconnect") {
+                try {
+                    m_client->reconnect();
+                } catch (const std::exception& exception) {
+                    std::cerr << std::format("Reconnect error: {}", exception.what()) << std::endl;
+                }
+                if (m_client->is_connected()) {
+                    std::cout << "Reconnected successfully" << std::endl;
+                }
                 continue;
             }
 

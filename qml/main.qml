@@ -40,6 +40,17 @@ ApplicationWindow {
                 }
             }
 
+            Button {
+                text: "Reconnect"
+                onClicked: {
+                    try {
+                        backend.reconnect()
+                    } catch (error) {
+                        console.error("Reconnect error:", error)
+                    }
+                }
+            }
+
             Item { Layout.fillWidth: true }
         }
     }

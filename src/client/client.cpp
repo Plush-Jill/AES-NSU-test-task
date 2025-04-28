@@ -12,6 +12,7 @@
 Client::Client(const QHostAddress &address, const quint16 port)
 : AbstractClient(address, port) {
     QObject::connect(this, &Client::command_execution_requested, this, &Client::handle_command, Qt::BlockingQueuedConnection);
+    QObject::connect(this, &Client::reconnect_requested, this, &Client::handle_reconnect_request, Qt::BlockingQueuedConnection);
 }
 
 void Client::execute_command(const QString& command_name) noexcept(false) {
@@ -119,6 +120,14 @@ void Client::stop_cli_input() noexcept(false) {
     }
 }
 
+void Client::reconnect() {
+    if (QThread::currentThread() != thread()) {
+        emit reconnect_requested();
+        return;
+    }
+    AbstractClient::reconnect();
+}
+
 void Client::process_cli_input() noexcept(false) {
     m_cli_thread = new CliThread(this);
     m_cli_thread->start();
@@ -134,5 +143,13 @@ void Client::handle_command(const QString& command, QString* result) {
         execute_command(command, result);
     } catch (const std::exception& exception) {
         if (result) *result = QString("Error: %1").arg(exception.what());
+    }
+}
+
+void Client::handle_reconnect_request() {
+    try {
+        reconnect();
+    } catch (const std::exception& exception) {
+        std::cerr << std::format("Reconnect error: {}", exception.what()) << std::endl;
     }
 }

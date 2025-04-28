@@ -30,3 +30,13 @@ QStringList Backend::get_commands() {
 QString Backend::get_history() const {
     return m_history.join("\n");
 }
+
+void Backend::reconnect() {
+    try {
+        m_client->reconnect();
+        m_history.prepend(QString("Reconnected"));
+    } catch (std::exception& exception) {
+        m_history.prepend(QString("Reconnect error: %1").arg(exception.what()));
+    }
+    emit historyChanged(m_history.join("\n"));
+}

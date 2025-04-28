@@ -14,14 +14,25 @@ int main(int argc, char** argv) {
     if (!file.open(QIODevice::ReadOnly)) {
         qFatal("Cannot open config file");
     }
+    QHostAddress address;
+    uint16_t port;
 
-    const auto json = QJsonDocument::fromJson(file.readAll()).object();
-    const auto address = QHostAddress(json["address"].toString());
-    const uint16_t port = json["port"].toInt();
+    try {
+        const auto json = QJsonDocument::fromJson(file.readAll()).object();
+        address = QHostAddress(json["address"].toString());
+        port = json["port"].toInt();
+    } catch (std::exception& exception) {
+        qFatal("Error parsing config file: %s", exception.what());
+    }
     file.close();
 
     const std::shared_ptr<AbstractClient> client = std::make_shared<Client>(address, port);
 
+    try {
+        client->connect();
+    } catch (std::runtime_error& error) {
+        std::cerr << "Error: " << error.what() << std::endl;
+    }
     client->process_cli_input();
 
 

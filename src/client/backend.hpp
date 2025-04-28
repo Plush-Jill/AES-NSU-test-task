@@ -33,6 +33,7 @@ public:
     Q_INVOKABLE void send_command(const QString& command);
     Q_INVOKABLE static QStringList get_commands();
     Q_INVOKABLE [[nodiscard]] QString get_history() const;
+    Q_INVOKABLE void reconnect();
 
     signals:
         void historyChanged(const QString& history);
