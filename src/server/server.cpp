@@ -7,37 +7,6 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
-class ServerData {
-private:
-    bool m_running = true;
-
-    uint32_t m_data_size = 0;
-    std::vector<uint16_t> m_data = std::vector<uint16_t> (1000, 15);
-    explicit ServerData(const u_int32_t data_size) : m_data_size(data_size) {
-        m_data.reserve(data_size);
-        for (uint32_t i = 0; i < data_size; ++i) {
-            m_data.push_back(rand()%1000);
-        }
-    }
-
-public:
-    explicit ServerData() = default;
-    static ServerData get_random_data() {
-        return ServerData(rand()%1000);
-    }
-
-    [[nodiscard]] bool get_running() const {
-        return m_running;
-    }
-
-    [[nodiscard]] uint32_t get_data_size() const {
-        return m_data_size;
-    }
-
-    [[nodiscard]] std::vector<uint16_t> get_data() const {
-        return m_data;
-    }
-};
 
 
 class SCPI_Server final : public QTcpServer {

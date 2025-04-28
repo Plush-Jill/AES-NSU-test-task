@@ -7,7 +7,7 @@
 #include <thread>
 #include "abstract-client.hpp"
 #include "cli_thread.hpp"
-#include "server-info.hpp"
+#include "../entity/server-info.hpp"
 #include "../commands/factory/command-factory.hpp"
 
 

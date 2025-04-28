@@ -7,7 +7,7 @@
 #include <QMutex>
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
-#include "server-info.hpp"
+#include "../entity/server-info.hpp"
 
 
 class AbstractClient {

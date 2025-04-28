@@ -3,6 +3,7 @@
 //
 
 #include "backend.hpp"
+#include "commands/factory/command-factory.hpp"
 
 void Backend::set_client(const std::shared_ptr<AbstractClient> &client) {
     m_client = client;

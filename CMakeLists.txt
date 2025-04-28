@@ -32,12 +32,12 @@ qt_add_executable(client-side src/main.cpp
         src/commands/get-data-size/get-data-size.cpp
         src/commands/get-data-size/get-data-size.hpp
         src/client/client.cpp
-        src/client/server-info.cpp
-        src/client/server-info.hpp
+        src/entity/server-info.cpp
+        src/entity/server-info.hpp
         src/client/abstract-client.hpp
         src/client/abstract-client.cpp
-        src/client/backend.cpp
-        src/client/backend.hpp
+        src/backend.cpp
+        src/backend.hpp
         src/client/cli_thread.cpp
         src/client/cli_thread.hpp)
 

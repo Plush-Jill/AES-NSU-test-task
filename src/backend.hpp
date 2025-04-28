@@ -5,18 +5,14 @@
 #ifndef BACKEND_HPP
 #define BACKEND_HPP
 
+#include <QFile>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QFile>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QStringListModel>
+#include "client/abstract-client.hpp"
 
-#include "abstract-client.hpp"
-#include "../commands/factory/command-factory.hpp"
-
+/**
+ * @brief класс-посредник между клиентом и GUI на QML.
+ */
 class Backend : public QObject {
     Q_OBJECT
 
