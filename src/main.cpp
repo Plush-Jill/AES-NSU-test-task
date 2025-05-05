@@ -1,7 +1,9 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <QtCore>
+#include <QGuiApplication>
+#include <QQmlContext>
+#include <QJsonObject>
 #include "client/client.hpp"
 #include "backend.hpp"
 
